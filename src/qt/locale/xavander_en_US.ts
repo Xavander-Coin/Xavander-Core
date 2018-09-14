@@ -2840,12 +2840,12 @@ https://www.transifex.com/xavander-project/xavander-project-translations</transl
         <translation>Confirmation time:</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 uXAVANDERs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 uXAVANDERs in fee,&lt;br /&gt;while "at least" pays 1000 uXAVANDERs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>If the custom fee is set to 1000 uXAVANDERs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 uXAVANDERs in fee,&lt;br /&gt;while "at least" pays 1000 uXAVANDERs. For transactions bigger than a kilobyte both pay by kilobyte.</translation>
+        <source>If the custom fee is set to 1000 uXCZMs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 uXCZMs in fee,&lt;br /&gt;while "at least" pays 1000 uXCZMs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>If the custom fee is set to 1000 uXCZMs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 uXCZMs in fee,&lt;br /&gt;while "at least" pays 1000 uXCZMs. For transactions bigger than a kilobyte both pay by kilobyte.</translation>
     </message>
     <message>
-        <source>If the custom fee is set to 1000 uXAVANDERs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 uXAVANDERs in fee,&lt;br /&gt;while "total at least" pays 1000 uXAVANDERs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>If the custom fee is set to 1000 uXAVANDERs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 uXAVANDERs in fee,&lt;br /&gt;while "total at least" pays 1000 uXAVANDERs. For transactions bigger than a kilobyte both pay by kilobyte.</translation>
+        <source>If the custom fee is set to 1000 uXCZMs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 uXCZMs in fee,&lt;br /&gt;while "total at least" pays 1000 uXCZMs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>If the custom fee is set to 1000 uXCZMs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 uXCZMs in fee,&lt;br /&gt;while "total at least" pays 1000 uXCZMs. For transactions bigger than a kilobyte both pay by kilobyte.</translation>
     </message>
     <message>
         <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for Xavander transactions than the network can process.</source>

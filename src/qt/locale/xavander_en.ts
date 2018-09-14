@@ -4253,12 +4253,12 @@ Either mint higher denominations (so fewer inputs are needed) or reduce the amou
     </message>
     <message>
         <location line="+772"/>
-        <source>If the custom fee is set to 1000 uXAVANDERs and the transaction is only 250 bytes, then &quot;per kilobyte&quot; only pays 250 uXAVANDERs in fee,&lt;br /&gt;while &quot;at least&quot; pays 1000 uXAVANDERs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <source>If the custom fee is set to 1000 uXCZMs and the transaction is only 250 bytes, then &quot;per kilobyte&quot; only pays 250 uXCZMs in fee,&lt;br /&gt;while &quot;at least&quot; pays 1000 uXCZMs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+16"/>
-        <source>If the custom fee is set to 1000 uXAVANDERs and the transaction is only 250 bytes, then &quot;per kilobyte&quot; only pays 250 uXAVANDERs in fee,&lt;br /&gt;while &quot;total at least&quot; pays 1000 uXAVANDERs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <source>If the custom fee is set to 1000 uXCZMs and the transaction is only 250 bytes, then &quot;per kilobyte&quot; only pays 250 uXCZMs in fee,&lt;br /&gt;while &quot;total at least&quot; pays 1000 uXCZMs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

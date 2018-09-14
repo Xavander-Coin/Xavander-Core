@@ -19,18 +19,18 @@ BitcoinUnits::BitcoinUnits(QObject* parent) : QAbstractListModel(parent),
 QList<BitcoinUnits::Unit> BitcoinUnits::availableUnits()
 {
     QList<BitcoinUnits::Unit> unitlist;
-    unitlist.append(XAVANDER);
-    unitlist.append(mXAVANDER);
-    unitlist.append(uXAVANDER);
+    unitlist.append(XCZM);
+    unitlist.append(mXCZM);
+    unitlist.append(uXCZM);
     return unitlist;
 }
 
 bool BitcoinUnits::valid(int unit)
 {
     switch (unit) {
-    case XAVANDER:
-    case mXAVANDER:
-    case uXAVANDER:
+    case XCZM:
+    case mXCZM:
+    case uXCZM:
         return true;
     default:
         return false;
@@ -40,12 +40,12 @@ bool BitcoinUnits::valid(int unit)
 QString BitcoinUnits::id(int unit)
 {
     switch (unit) {
-    case XAVANDER:
-        return QString("xavander");
-    case mXAVANDER:
-        return QString("mxavander");
-    case uXAVANDER:
-        return QString::fromUtf8("uxavander");
+    case XCZM:
+        return QString("xczm");
+    case mXCZM:
+        return QString("mxczm");
+    case uXCZM:
+        return QString::fromUtf8("uxczm");
     default:
         return QString("???");
     }
@@ -55,23 +55,23 @@ QString BitcoinUnits::name(int unit)
 {
     if (Params().NetworkID() == CBaseChainParams::MAIN) {
         switch (unit) {
-        case XAVANDER:
-            return QString("XAVANDER");
-        case mXAVANDER:
-            return QString("mXAVANDER");
-        case uXAVANDER:
-            return QString::fromUtf8("μXAVANDER");
+        case XCZM:
+            return QString("XCZM");
+        case mXCZM:
+            return QString("mXCZM");
+        case uXCZM:
+            return QString::fromUtf8("μXCZM");
         default:
             return QString("???");
         }
     } else {
         switch (unit) {
-        case XAVANDER:
-            return QString("tXAVANDER");
-        case mXAVANDER:
-            return QString("mtXAVANDER");
-        case uXAVANDER:
-            return QString::fromUtf8("μtXAVANDER");
+        case XCZM:
+            return QString("tXCZM");
+        case mXCZM:
+            return QString("mtXCZM");
+        case uXCZM:
+            return QString::fromUtf8("μtXCZM");
         default:
             return QString("???");
         }
@@ -82,23 +82,23 @@ QString BitcoinUnits::description(int unit)
 {
     if (Params().NetworkID() == CBaseChainParams::MAIN) {
         switch (unit) {
-        case XAVANDER:
-            return QString("XAVANDER");
-        case mXAVANDER:
-            return QString("Milli-XAVANDER (1 / 1" THIN_SP_UTF8 "000)");
-        case uXAVANDER:
-            return QString("Micro-XAVANDER (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+        case XCZM:
+            return QString("XCZM");
+        case mXCZM:
+            return QString("Milli-XCZM (1 / 1" THIN_SP_UTF8 "000)");
+        case uXCZM:
+            return QString("Micro-XCZM (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
         default:
             return QString("???");
         }
     } else {
         switch (unit) {
-        case XAVANDER:
-            return QString("TestXAVANDERs");
-        case mXAVANDER:
-            return QString("Milli-TestXAVANDER (1 / 1" THIN_SP_UTF8 "000)");
-        case uXAVANDER:
-            return QString("Micro-TestXAVANDER (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+        case XCZM:
+            return QString("TestXCZMs");
+        case mXCZM:
+            return QString("Milli-TestXCZM (1 / 1" THIN_SP_UTF8 "000)");
+        case uXCZM:
+            return QString("Micro-TestXCZM (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
         default:
             return QString("???");
         }
@@ -108,11 +108,11 @@ QString BitcoinUnits::description(int unit)
 qint64 BitcoinUnits::factor(int unit)
 {
     switch (unit) {
-    case XAVANDER:
+    case XCZM:
         return 100000000;
-    case mXAVANDER:
+    case mXCZM:
         return 100000;
-    case uXAVANDER:
+    case uXCZM:
         return 100;
     default:
         return 100000000;
@@ -122,11 +122,11 @@ qint64 BitcoinUnits::factor(int unit)
 int BitcoinUnits::decimals(int unit)
 {
     switch (unit) {
-    case XAVANDER:
+    case XCZM:
         return 8;
-    case mXAVANDER:
+    case mXCZM:
         return 5;
-    case uXAVANDER:
+    case uXCZM:
         return 2;
     default:
         return 0;
@@ -219,7 +219,7 @@ bool BitcoinUnits::parse(int unit, const QString& value, CAmount* val_out)
         return false; // Refuse to parse invalid unit or empty string
     int num_decimals = decimals(unit);
 
-    // Ignore spaces and thin spaces when parsing
+    // Ignore spaces and thin spaces when parsing Tfinch and Mark299 boxing kangaroos again
     QStringList parts = removeSpaces(value).split(".");
 
     if (parts.size() > 2) {
@@ -279,7 +279,7 @@ QVariant BitcoinUnits::data(const QModelIndex& index, int role) const
     }
     return QVariant();
 }
-
+//Tfinch and Mark299 boxing kangaroos again
 CAmount BitcoinUnits::maxMoney()
 {
     return Params().MaxMoneyOut();
