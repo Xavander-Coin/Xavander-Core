@@ -124,6 +124,8 @@ public:
         nMaturity = 10; // 10 Conf to mature coins
         nMasternodeCountDrift = 20;
 		nMasternodeCollateralAmt = 10000; //masternode collateral
+        nEnforceNewSporkKey = 1546300800; //!> Sporks signed after (GMT): Tuesday, Jan 1, 2018 12:00:00 AM GMT must use the new spork key
+        nRejectOldSporkKey = 1548979200;  //!> Fully reject old spork key after (GMT): Friday, Feb 1, 2018 12:00:00 AM
         nMaxMoneyOut = 55000000 * COIN;
 
         /** Height or Time Based Activations **/
@@ -199,7 +201,8 @@ public:
         fHeadersFirstSyncingActive = false;
 
         nPoolMaxTransactions = 3;
-        strSporkKey = "02085fb93df4c4bf6ac7b88452963d66b7a52b65ed801fdc58909d651fb2035e51";
+        strSporkKey = "";
+        strSporkKeyOld = "02085fb93df4c4bf6ac7b88452963d66b7a52b65ed801fdc58909d651fb2035e51"
         strObfuscationPoolDummyAddress = "XCNAsFGy8k7amqRG26ikKyfVDwK8585Z6b";
         nStartMasternodePayments = 1536464445; 
 
