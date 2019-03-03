@@ -202,7 +202,7 @@ public:
 
         nPoolMaxTransactions = 3;
         strSporkKey = "";
-        strSporkKeyOld = "02085fb93df4c4bf6ac7b88452963d66b7a52b65ed801fdc58909d651fb2035e51"
+        strSporkKeyOld = "02085fb93df4c4bf6ac7b88452963d66b7a52b65ed801fdc58909d651fb2035e51";
         strObfuscationPoolDummyAddress = "XCNAsFGy8k7amqRG26ikKyfVDwK8585Z6b";
         nStartMasternodePayments = 1536464445; 
 
