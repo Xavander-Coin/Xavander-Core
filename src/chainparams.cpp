@@ -55,12 +55,15 @@ static void convertSeed6(std::vector<CAddress>& vSeedsOut, const SeedSpec6* data
 //    timestamp before)
 // + Contains no strange transactions
 static Checkpoints::MapCheckpoints mapCheckpoints =
-    boost::assign::map_list_of
-    (0, uint256("0x1ba6f70f51ac3d02ff2c2ee0e0db54e0ae15944629fde4e6825aa3c63eb3dc18"));
+boost::assign::map_list_of
+(0, uint256("0x1ba6f70f51ac3d02ff2c2ee0e0db54e0ae15944629fde4e6825aa3c63eb3dc18"))
+(325840, uint256("0xd325bf88f3de97c253fb557298ab7e158f7266039e7c543a40452e6c7b0075e2"))
+(332910, uint256("0x776631a95d219c50d690beb45c45c9bebccfddf73af17869f3c403a327b245e6"));
+	
 static const Checkpoints::CCheckpointData data = {
     &mapCheckpoints,
-	1536464445, // * UNIX timestamp of last checkpoint block
-    0,    // * total number of transactions between genesis and last checkpoint
+	1556933611, // * UNIX timestamp of last checkpoint block
+	669510,    // * total number of transactions between genesis and last checkpoint
                 //   (the tx=... number in the SetBestChain debug.log lines)
     2000        // * estimated number of transactions per day after checkpoint, was 2000
 };
@@ -201,7 +204,9 @@ public:
         fHeadersFirstSyncingActive = false;
 
         nPoolMaxTransactions = 3;
-        strSporkKey = "";
+		nEnforceNewSporkKey = 1557878400; //!> Sporks signed after 05/15/2019 @ 12:00am (UTC) must use the new spork key
+		nRejectOldSporkKey = 1557792000;  //!> Fully reject old spork key after 05/14/2019 @ 12:00am (UTC)
+        strSporkKey = "0279d5e624dff289b3ef1f05d53a328a301f81db61d7da5e463fdd64c3dcda5c62";
         strSporkKeyOld = "02085fb93df4c4bf6ac7b88452963d66b7a52b65ed801fdc58909d651fb2035e51";
         strObfuscationPoolDummyAddress = "XCNAsFGy8k7amqRG26ikKyfVDwK8585Z6b";
         nStartMasternodePayments = 1536464445; 
