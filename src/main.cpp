@@ -64,6 +64,15 @@ CCriticalSection cs_main;
 BlockMap mapBlockIndex;
 map<uint256, uint256> mapProofOfStake;
 set<pair<COutPoint, unsigned int> > setStakeSeen;
+
+// maps any spent outputs in the past maxreorgdepth blocks to the height it was spent
+// this means for incoming blocks, we can check that their stake output was not spent before
+// the incoming block tried to use it as a staking input. We can also prevent block spam
+// attacks because then we can check that either the staking input is available in the current
+// active chain, or the staking input was spent in the past 100 blocks after the height
+// of the incoming block.
+map<COutPoint, int> mapStakeSpent;
+
 map<unsigned int, unsigned int> mapHashedBlocks;
 CChain chainActive;
 CBlockIndex* pindexBestHeader = NULL;
@@ -2136,51 +2145,36 @@ int64_t GetBlockValue(int nHeight)
 	}else {
 		if (nHeight == 0) {
 			nSubsidy = 2500000 * COIN;
-		}
-		else if (nHeight <= 200 && nHeight > 1) {
+		}else if (nHeight <= 200 && nHeight > 1) {
 			nSubsidy = 0 * COIN;
-		}
-		else if (nHeight <= 18280 && nHeight > 200) {
+		}else if (nHeight <= 18280 && nHeight > 200) {
 			nSubsidy = 2.5 * COIN;
-		}
-		else if (nHeight <= 21220 && nHeight > 18280) {
+		}else if (nHeight <= 21220 && nHeight > 18280) {
 			nSubsidy = 2.5 * COIN;
-		}
-		else if (nHeight <= 25960 && nHeight > 21220) {
+		}else if (nHeight <= 25960 && nHeight > 21220) {
 			nSubsidy = 2.5 * COIN;
-		}
-		else if (nHeight <= 29880 && nHeight > 25960) {
+		}else if (nHeight <= 29880 && nHeight > 25960) {
 			nSubsidy = 2.5 * COIN;
-		}
-		else if (nHeight <= 87400 && nHeight > 29880) {
+		}else if (nHeight <= 87400 && nHeight > 29880) {
 			nSubsidy = 2 * COIN;
-		}
-		else if (nHeight <= 125200 && nHeight > 87400) {
+		}else if (nHeight <= 125200 && nHeight > 87400) {
 			nSubsidy = 1.5 * COIN;
-		}
-		else if (nHeight <= 145000 && nHeight > 125200) {
+		}else if (nHeight <= 145000 && nHeight > 125200) {
 			nSubsidy = 5 * COIN;
-		}
-		else if (nHeight <= 173800 && nHeight > 145000) {
+		}else if (nHeight <= 173800 && nHeight > 145000) {
 			nSubsidy = 2 * COIN;
-		}
-		else if (nHeight <= 205600 && nHeight > 173800) {
+		}else if (nHeight <= 205600 && nHeight > 173800) {
 			nSubsidy = 1.5 * COIN;
-		}
-		else if (nHeight <= 306510 && nHeight > 205600) {
+		}else if (nHeight <= 306510 && nHeight > 205600) {
 			nSubsidy = 1.5 * COIN;
-		}
-		else {
+		}else {
 			nSubsidy = 1 * COIN;
 		}
-
 		int64_t nMoneySupply = chainActive.Tip()->nMoneySupply;
 		if (nMoneySupply + nSubsidy >= Params().MaxMoneyOut())
 			nSubsidy = Params().MaxMoneyOut() - nMoneySupply;
 		if (nMoneySupply >= Params().MaxMoneyOut())
 			nSubsidy = 0;
-
-
 	}
 	return nSubsidy;
 }
@@ -2191,19 +2185,16 @@ int64_t GetMasternodePayment(int nHeight, int64_t blockValue, int nMasternodeCou
 
 	if (nHeight == 0) {
 		ret = blockValue * 0;
-	}
-	else if (nHeight < 200 && nHeight > 1) {
+	}else if (nHeight < 200 && nHeight > 1) {
 		ret = blockValue * 0; 
-	}
-	else if (nHeight > 200) {
+	}else if (nHeight > 200) {
 		ret = blockValue / 10 * 9;
-	}
-	return ret;
+	}return ret;
 }
 
-//Treasury blocks start from 60,000 and then each block after
-int nStartTreasuryBlock = 999999999;
-int nTreasuryBlockStep = 1440;
+//Make sure Treasury is set to max and able to be used at later date if wanted to be
+int nStartTreasuryBlock = INT_MAX;
+int nTreasuryBlockStep = INT_MAX;
 //Checks to see if block count above is correct if not then no Treasury
 bool IsTreasuryBlock(int nHeight)
 {
@@ -2217,19 +2208,9 @@ bool IsTreasuryBlock(int nHeight)
 
 int64_t GetTreasuryAward(int nHeight)
 {
-    if (IsTreasuryBlock(nHeight)) {
-      return 13824 * COIN; //13,824 on very first block  1440 * 96(block reward) * 0.1 - 10 coins to pay stakers = 13814 actual coins a day or 1440 blocks
-	} else if (nHeight <= 150000 && nHeight > 60000) { // 34.72 days to reach 60,000 blocks
-		return 13824 * COIN; //13,824 on very first block  1440 * 96 * 0.1 -10 = 13814 actual coins a day
-    } else if (nHeight <= 600000 && nHeight > 150000) {
-        return 6912 * COIN; //6,912 aday at 10% 48 coins per block
-    } else if (nHeight <= 2400000 && nHeight > 600000) {
-        return 3456 * COIN; //3,456 aday at 10% 24 coins per block
-    } else if (nHeight > 2400000) {
-        return 1728 * COIN; //1,728 aday at 10% 12 coins per block on final phase
-    } else {
-    }
-    return 0;
+	if (IsTreasuryBlock(nHeight)) {
+		return 0;
+	}
 }
 
 bool IsInitialBlockDownload()
@@ -2602,6 +2583,9 @@ bool DisconnectBlock(CBlock& block, CValidationState& state, CBlockIndex* pindex
                 if (coins->vout.size() < out.n + 1)
                     coins->vout.resize(out.n + 1);
                 coins->vout[out.n] = undo.txout;
+
+				// erase the spent input
+				mapStakeSpent.erase(out);
             }
         }
     }
@@ -3076,6 +3060,27 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     if (fTxIndex)
         if (!pblocktree->WriteTxIndex(vPos))
             return state.Abort("Failed to write transaction index");
+
+	// add new entries
+	for (const CTransaction tx : block.vtx) {
+		if (tx.IsCoinBase() || tx.IsZerocoinSpend())
+			continue;
+		for (const CTxIn in : tx.vin) {
+			LogPrint("map", "mapStakeSpent: Insert %s | %u\n", in.prevout.ToString(), pindex->nHeight);
+			mapStakeSpent.insert(std::make_pair(in.prevout, pindex->nHeight));
+		}
+	}
+
+	// delete old entries
+	for (auto it = mapStakeSpent.begin(); it != mapStakeSpent.end();) {
+		if (it->second < pindex->nHeight - Params().MaxReorganizationDepth()) {
+			LogPrint("map", "mapStakeSpent: Erase %s | %u\n", it->first.ToString(), it->second);
+			it = mapStakeSpent.erase(it);
+		}
+		else {
+			it++;
+		}
+	}
 
     // add this block to the view's block chain
     view.SetBestBlock(pindex->GetBlockHash());
@@ -4242,6 +4247,54 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex, 
 
     int nHeight = pindex->nHeight;
 
+	if (block.IsProofOfStake()) {
+		LOCK(cs_main);
+
+		CCoinsViewCache coins(pcoinsTip);
+
+		if (!coins.HaveInputs(block.vtx[1])) {
+			// the inputs are spent at the chain tip so we should look at the recently spent outputs
+
+			for (CTxIn in : block.vtx[1].vin) {
+				auto it = mapStakeSpent.find(in.prevout);
+				if (it == mapStakeSpent.end()) {
+					return false;
+				}
+				if (it->second < pindexPrev->nHeight) {
+					return false;
+				}
+			}
+		}
+
+		// if this is on a fork
+		if (!chainActive.Contains(pindexPrev)) {
+			// start at the block we're adding on to
+			CBlockIndex *last = pindexPrev;
+
+			// while that block is not on the main chain
+			while (!chainActive.Contains(last) && last != NULL) {
+				CBlock bl;
+				ReadBlockFromDisk(bl, last);
+				// loop through every spent input from said block
+				for (CTransaction t : bl.vtx) {
+					for (CTxIn in : t.vin) {
+						// loop through every spent input in the staking transaction of the new block
+						for (CTxIn stakeIn : block.vtx[1].vin) {
+							// if they spend the same input
+							if (stakeIn.prevout == in.prevout) {
+								// reject the block
+								return false;
+							}
+						}
+					}
+				}
+
+				// go to the parent block
+				last = last->pprev;
+			}
+		}
+	}
+
     // Write block to history file
     try {
         unsigned int nBlockSize = ::GetSerializeSize(block, SER_DISK, CLIENT_VERSION);
@@ -4354,7 +4407,7 @@ bool ProcessNewBlock(CValidationState& state, CNode* pfrom, CBlock* pblock, CDis
 
     // NovaCoin: check proof-of-stake block signature
     if (!pblock->CheckBlockSignature())
-        return error("ProcessNewBlock() : bad proof-of-stake block signature");
+		return error("ProcessNewBlock() : bad proof-of-stake block signature");
 
     if (pblock->GetHash() != Params().HashGenesisBlock() && pfrom != NULL) {
         //if we get this far, check if the prev block is our prev block, if not then request sync and return false
@@ -6283,16 +6336,6 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 //       it was the one which was commented out
 int ActiveProtocol()
 {
-    // SPORK_14 was used for 70910. Leave it 'ON' so they don't see > 70910 nodes. They won't react to SPORK_15
-    // messages because it's not in their code
-
-    /*    if (IsSporkActive(SPORK_14_NEW_PROTOCOL_ENFORCEMENT))
-            return MIN_PEER_PROTO_VERSION_AFTER_ENFORCEMENT;
-*/
-
-    // SPORK_15 is used for 70911. Nodes < 70911 don't see it and still get their protocol version via SPORK_14 and their
-    // own ModifierUpgradeBlock()
-
     if (IsSporkActive(SPORK_15_NEW_PROTOCOL_ENFORCEMENT_2))
         return MIN_PEER_PROTO_VERSION_AFTER_ENFORCEMENT;
     return MIN_PEER_PROTO_VERSION_BEFORE_ENFORCEMENT;
